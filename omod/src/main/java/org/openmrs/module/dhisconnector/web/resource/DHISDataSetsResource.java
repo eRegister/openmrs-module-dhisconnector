@@ -36,7 +36,7 @@ import java.util.List;
 
 @Resource(name = RestConstants.VERSION_1 + DHISConnectorRestController.DHISCONNECTOR_NAMESPACE
 		+ "/dhisdatasets", supportedClass = DHISDataSet.class, supportedOpenmrsVersions = { "1.8.*", "1.9.*, 1.10.*, 1.11.*",
-		"1.12.*", "2.0.*" })
+		"1.12.*", "2.*" })
 public class DHISDataSetsResource extends DataDelegatingCrudResource implements Retrievable {
 
 	public static final String DATASETS_PATH = "/api/dataSets";
@@ -45,9 +45,9 @@ public class DHISDataSetsResource extends DataDelegatingCrudResource implements 
 
 	public static final String NO_PAGING_PARAM = "?paging=false";
 
-	private static final String NO_PAGING_IDENTIFIABLE_PARAM = "&fields=name,displayName,code,id,periodType,dataElements[id,name,displayName,code],dataSetElements[id,dataElement[id,name,displayName,code],dataSet]";
+	private static final String NO_PAGING_IDENTIFIABLE_PARAM = "&fields=name,displayName,code,id,periodType,dataElements[id,name,displayName,code],dataSetElements[id,dataElement[id,name,displayName,code],dataSet],organisationUnits[id,name]";
 
-    private static final String DE_IDENTIFIABLE_PARAM = "?fields=name,displayName,code,id,periodType,dataElements[id,name,displayName,code],dataSetElements[id,dataElement[id,name,displayName,code],dataSet]";
+    private static final String DE_IDENTIFIABLE_PARAM = "?fields=name,displayName,code,id,periodType,dataElements[id,name,displayName,code],categoryCombo[id,name,dataDimensionType],dataSetElements[id,dataElement[id,name,displayName,code],dataSet],organisationUnits[id,name]";
 
 	@Override
 	public DHISDataSet getByUniqueId(String s) {
@@ -130,6 +130,7 @@ public class DHISDataSetsResource extends DataDelegatingCrudResource implements 
 			description.addProperty("categoryCombo");
 			description.addProperty("dataElements");
 			description.addProperty("dataSetElements");
+			description.addProperty("organisationUnits");
 		} else {
 			description.addProperty("id");
 			description.addProperty("name");
@@ -137,6 +138,7 @@ public class DHISDataSetsResource extends DataDelegatingCrudResource implements 
 			description.addProperty("created");
 			description.addProperty("lastUpdated");
 			description.addProperty("href");
+			description.addProperty("organisationUnits");
 		}
 
 		return description;

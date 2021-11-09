@@ -1,5 +1,7 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 <%@ include file="/WEB-INF/template/header.jsp" %>
+<openmrs:require anyPrivilege="View Automation,Run Automation,Manage Automation" otherwise="/login.htm"
+                 redirect="/module/dhisconnector/automation.form"/>
 
 <%@ include file="template/localHeader.jsp" %>
 
@@ -7,68 +9,70 @@
 	<c:redirect url="../../login.htm" />
 </c:if>
 
-<h3>Setting up OpenMRS reports to automatically report into the configured DHIS2 instance</h3>
+<h3><spring:message code="dhisconnector.automation.heading"/></h3>
 
-NB: Running is contextualised; the module will only run once for each day, week or month only for the previous past period respectively.
-Otherwise you may trigger a re-run which is likewise contextual
+<spring:message code="dhisconnector.automation.description"/>
 <form method="post">
 	<br />
-		<input type="checkbox" name="toogleAutomation" <c:if test="${automationEnabled}">checked="checked"</c:if>>Enable/Disable Automation</input>
-	<br />
-    <table>
-        <thead>
-            <tr>
-            	<th>Delete</th>
-            	<th>Run</th>
-                <th>Mapping</th>
-                <th>OpenMRS Location</th>
-                <th>DHIS2 Organization Unit</th>
-                <th>Re/Last Run</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="evenRow">
-                <td>Add</td>
-                <td>New</td>
-                <td>
-                    <select name="mapping">
-                        <option></option>
-                        <c:forEach items="${mappings}" var="mapping">
-                            <option value="${mapping.name}.${mapping.created}">${mapping.name}</option>
-                        </c:forEach>
-                    </select>
-                </td>
-                <td>
-                    <select name="location">
-                        <option></option>
-                        <c:forEach items="${locations}" var="location">
-                            <option value="${location.uuid}">${location.name}</option>
-                        </c:forEach>
-                    </select>
-                </td>
-                <td>
-                    <select name="orgUnit">
-                        <option></option>
-                        <c:forEach items="${orgUnits}" var="orgUnit">
-                            <option value="${orgUnit.id}">${orgUnit.name}</option>
-                        </c:forEach>
-                    </select>
-                </td>
-                <td></td>
-            </tr>
-            <c:forEach items="${reportToDataSetMappings}" var="mpg">
-                <tr class="evenRow">
-                    <td><input type="checkbox" name="mappingIds" value="${mpg.id}"/></td>
-                    <td><input type="checkbox" name="runs" value="${mpg.uuid}"/></td>
-                    <td>${fn:substringBefore(mpg.mapping, '.')}</td>
-                    <td>${mpg.location.name}</td>
-                    <td>${orgUnitsByIds[mpg.orgUnitUid]}</td>
-                    <td><c:if test="${not empty mpg.lastRun}"><input type="checkbox" name="reRuns" value="${mpg.uuid}"/></c:if> ${mpg.lastRun}</td>
+    <input type="checkbox" name="toggleAutomation" <c:if test="${automationEnabled}">checked="checked"</c:if>
+           <openmrs:hasPrivilege privilege="Manage Automation" inverse="true">disabled</openmrs:hasPrivilege>>
+        <spring:message code="dhisconnector.automation.toggleAutomation"/>
+    </input>
+    <openmrs:hasPrivilege privilege="Manage Automation">
+        <input name="saveAutomationToggle" type="submit" value="<spring:message code="dhisconnector.save" />"/>
+    </openmrs:hasPrivilege>
+    <br />
+    <br />
+    <openmrs:hasPrivilege privilege="Manage Automation">
+        <span>New mapping</span>
+        <span>
+            <select name="mapping">
+                <option></option>
+                <c:forEach items="${mappings}" var="mapping">
+                    <option value="${mapping.name}.${mapping.created}">${mapping.name}</option>
+                </c:forEach>
+            </select>
+        </span>
+        <input name="addMapping" type="submit" value="<spring:message code="dhisconnector.automation.add" />"/>
+    </openmrs:hasPrivilege>
+    <br />
+    <br />
+    <c:if test="${not empty reportToDataSetMappings}">
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th><spring:message code="dhisconnector.automation.mapping"/></th>
+                    <th></th>
+                    <th><spring:message code="dhisconnector.automation.lastRun"/></th>
                 </tr>
-           </c:forEach>
-        </tbody>
-    </table>
-    <input type="submit" value="Submit">
+            </thead>
+            <tbody>
+                <c:forEach items="${reportToDataSetMappings}" var="mpg">
+                    <tr class="evenRow">
+                        <td>
+                            <openmrs:hasPrivilege privilege="Manage Automation,Run Automation">
+                                <input type="checkbox" name="mappingIds" value="${mpg.uuid}"/>
+                            </openmrs:hasPrivilege>
+                        </td>
+                        <td>${fn:substringBefore(mpg.mapping, '.')}</td>
+                        <td></td>
+                        <td>${mpg.lastRun}</td>
+                    </tr>
+               </c:forEach>
+            </tbody>
+        </table>
+        <br />
+        <openmrs:hasPrivilege privilege="Run Automation">
+            <input name="run" type="submit" value="<spring:message code='dhisconnector.automation.runSelected'/>">
+        </openmrs:hasPrivilege>
+        <openmrs:hasPrivilege privilege="Run Automation">
+            <input name="runAll" type="submit" value="<spring:message code='dhisconnector.automation.runAllAutomations'/>">
+        </openmrs:hasPrivilege>
+        <openmrs:hasPrivilege privilege="Manage Automation">
+            <input name="delete" type="submit" value="<spring:message code='dhisconnector.automation.delete'/>">
+        </openmrs:hasPrivilege>
+    </c:if>
 </form>
 
 <c:forEach items="${postResponse}" var="resp">

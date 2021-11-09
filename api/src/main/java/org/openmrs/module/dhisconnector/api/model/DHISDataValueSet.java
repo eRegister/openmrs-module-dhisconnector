@@ -26,6 +26,7 @@ import java.util.List;
     "completeData",
     "period",
     "orgUnit",
+    "attributeOptionCombo",
     "dataValues"
 })
 public class DHISDataValueSet {
@@ -38,6 +39,8 @@ public class DHISDataValueSet {
     private String period;
     @JsonProperty("orgUnit")
     private String orgUnit;
+    @JsonProperty("attributeOptionCombo")
+    private String attributeOptionCombo;
     @JsonProperty("dataValues")
     private List<DHISDataValue> dataValues = new ArrayList<DHISDataValue>();
 
@@ -119,6 +122,26 @@ public class DHISDataValueSet {
     @JsonProperty("orgUnit")
     public void setOrgUnit(String orgUnit) {
         this.orgUnit = orgUnit;
+    }
+
+    /**
+     *
+     * @return
+     *     The attribute option combo
+     */
+    @JsonProperty("attributeOptionCombo")
+    public String getAttributeOptionCombo() {
+        return attributeOptionCombo;
+    }
+
+    /**
+     *
+     * @param attributeOptionCombo
+     *     The attributeOptionCombo
+     */
+    @JsonProperty("attributeOptionCombo")
+    public void setAttributeOptionCombo(String attributeOptionCombo) {
+        this.attributeOptionCombo = attributeOptionCombo;
     }
 
     /**

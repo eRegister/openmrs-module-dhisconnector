@@ -1,6 +1,7 @@
 package org.openmrs.module.dhisconnector;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.annotation.Generated;
 import javax.persistence.Column;
@@ -10,13 +11,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.openmrs.BaseOpenmrsObject;
-import org.openmrs.Location;
 import org.openmrs.User;
 
 /**
@@ -35,9 +35,18 @@ public class ReportToDataSetMapping extends BaseOpenmrsObject {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "creator")
 	protected User creator;
-	
+
+	// @OneToMany(mappedBy="mapping")
+	// private Set<MappingsRepush> mappingsrepush;
+
 	@Column(name = "date_created", nullable = false)
 	private Date dateCreated;
+
+	@Column(name = "last_push_retry", nullable = true)
+	private Date lastPushRetry;
+
+	@Column(name = "retry_count", nullable = true)
+	private Integer retryCount;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -47,24 +56,14 @@ public class ReportToDataSetMapping extends BaseOpenmrsObject {
 	@Column(name = "mapping", nullable = false)
 	private String mapping;
 	
-	@Column(name = "org_unit_uid", nullable = false)
-	private String orgUnitUid;
-	
 	@Column(name = "last_run")
 	private Date lastRun;
-	
-	@JsonIgnore
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "location")
-	private Location location;
 	
 	public ReportToDataSetMapping() {
 	}
 	
-	public ReportToDataSetMapping(String mapping, Location location, String orgUnitId) {
+	public ReportToDataSetMapping(String mapping) {
 		setMapping(mapping);
-		setLocation(location);
-		setOrgUnitUid(orgUnitId);
 	}
 	
 	public Integer getId() {
@@ -73,22 +72,6 @@ public class ReportToDataSetMapping extends BaseOpenmrsObject {
 	
 	public void setId(Integer id) {
 		this.id = id;
-	}
-	
-	public String getOrgUnitUid() {
-		return orgUnitUid;
-	}
-	
-	public void setOrgUnitUid(String orgUnitUid) {
-		this.orgUnitUid = orgUnitUid;
-	}
-	
-	public Location getLocation() {
-		return location;
-	}
-	
-	public void setLocation(Location location) {
-		this.location = location;
 	}
 	
 	public String getMapping() {
@@ -123,12 +106,37 @@ public class ReportToDataSetMapping extends BaseOpenmrsObject {
 	public void setCreator(User creator) {
 		this.creator = creator;
 	}
+
+
+	/*public Set<MappingsRepush> getMappingsrepush() {
+		return mappingsrepush;
+	}*/
+
+	/*public void setMappingsrepush(Set<MappingsRepush> mappingsrepush) {
+		this.mappingsrepush = mappingsrepush;
+	}*/
 	
 	/**
 	 * @see org.openmrs.Auditable#getDateCreated()
 	 */
 	public Date getDateCreated() {
 		return dateCreated;
+	}
+
+	public Date getLastPushRetry() {
+		return lastPushRetry;
+	}
+
+	public void setLastPushRetry(Date lastPushRetry) {
+		this.lastPushRetry = lastPushRetry;
+	}
+
+	public Integer getRetryCount() {
+		return retryCount;
+	}
+
+	public void setRetryCount(Integer retryCount) {
+		this.retryCount = retryCount;
 	}
 	
 	/**
@@ -139,6 +147,7 @@ public class ReportToDataSetMapping extends BaseOpenmrsObject {
 	}
 	
 	public enum ReportingPeriodType {
-		Daily, Weekly, Monthly, BiMonthly, Quarterly, SixMonthly, SixMonthlyApril, Yearly, FinancialApril, FinancialJuly, FinancialOct
+		Daily, Weekly, WeeklySunday, WeeklyWednesday, WeeklyThursday, WeeklySaturday, BiWeekly, Monthly, BiMonthly,
+		Quarterly, SixMonthly, SixMonthlyApril, Yearly, FinancialApril, FinancialJuly, FinancialOct, FinancialNov
 	}
 }

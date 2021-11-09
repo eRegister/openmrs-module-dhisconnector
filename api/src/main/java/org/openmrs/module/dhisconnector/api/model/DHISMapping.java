@@ -27,6 +27,7 @@ import java.util.List;
 		"periodType",
 		"created",
 		"dataSetUID",
+		"attributeOptionCombo",
 		"periodIndicatorReportGUID",
 		"elements"
 })
@@ -44,6 +45,9 @@ public class DHISMapping {
 
 	@JsonProperty("dataSetUID")
 	private String dataSetUID;
+
+	@JsonProperty("attributeOptionCombo")
+	private String attributeOptionCombo;
 
 	@JsonProperty("periodIndicatorReportGUID")
 	private String periodIndicatorReportGUID;
@@ -113,6 +117,22 @@ public class DHISMapping {
 	@JsonProperty("dataSetUID")
 	public void setDataSetUID(String dataSetUID) {
 		this.dataSetUID = dataSetUID;
+	}
+
+	/**
+	 * @return The attributeOptionCombo
+	 */
+	@JsonProperty("attributeOptionCombo")
+	public String getAttributeOptionCombo() {
+		return this.attributeOptionCombo;
+	}
+
+	/**
+	 * @param attributeOptionCombo The attributeOptionCombo
+	 */
+	@JsonProperty("attributeOptionCombo")
+	public void setAttributeOptionCombo(String attributeOptionCombo) {
+		this.attributeOptionCombo = attributeOptionCombo;
 	}
 
 	/**

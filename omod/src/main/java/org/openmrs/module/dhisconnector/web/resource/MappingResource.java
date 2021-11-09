@@ -36,7 +36,7 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @Resource(name = RestConstants.VERSION_1 + DHISConnectorRestController.DHISCONNECTOR_NAMESPACE
 		+ "/mappings", supportedClass = DHISMapping.class, supportedOpenmrsVersions = { "1.8.*",
-				"1.9.*, 1.10.*, 1.11.*", "1.12.*", "2.0.*" })
+				"1.9.*, 1.10.*, 1.11.*", "1.12.*", "2.*" })
 public class MappingResource extends DataDelegatingCrudResource implements Retrievable {
 
 	@Override
@@ -117,6 +117,7 @@ public class MappingResource extends DataDelegatingCrudResource implements Retri
 		description.addProperty("name");
 		description.addProperty("created");
 		description.addProperty("dataSetUID");
+		description.addProperty("attributeOptionCombo");
 		description.addProperty("periodIndicatorReportGUID");
 		description.addProperty("periodType");
 		description.addProperty("elements");
@@ -130,6 +131,7 @@ public class MappingResource extends DataDelegatingCrudResource implements Retri
 		description.addProperty("name");
 		description.addProperty("created");
 		description.addProperty("dataSetUID");
+		description.addProperty("attributeOptionCombo");
 		description.addProperty("periodIndicatorReportGUID");
 		description.addProperty("periodType");
 		description.addProperty("elements");

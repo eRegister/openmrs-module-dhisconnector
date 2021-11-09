@@ -1,5 +1,7 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 <%@ include file="/WEB-INF/template/header.jsp" %>
+<openmrs:require privilege="Manage Mappings" otherwise="/login.htm"
+                 redirect="/module/dhisconnector/createMapping.form"/>
 
 <openmrs:htmlInclude file="/moduleResources/dhisconnector/flexboxgrid.min.css"/>
 <openmrs:htmlInclude file="/moduleResources/dhisconnector/dragula.min.css"/>
@@ -25,6 +27,9 @@
   </div>
   <div class="col-xs">
     <div class="box" id="datasets"><img class="spinner" src="../../moduleResources/dhisconnector/loading.gif"/></div>
+  </div>
+  <div class="col-xs">
+    <div class="box" id="attributeOptions"><img class="spinner" src="../../moduleResources/dhisconnector/loading.gif"/></div>
   </div>
 </div>
 </p>

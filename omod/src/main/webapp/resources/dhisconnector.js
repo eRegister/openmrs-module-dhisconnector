@@ -16,6 +16,7 @@ var dataSets;
 var drake;
 var dataElements;
 var categoryComboOptions;
+var attributeComboOptions;
 var OMRS_WEBSERVICES_BASE_URL = '../..';
 var jq = jQuery;
 var reportsDropDownAjax;
@@ -79,6 +80,43 @@ function getCategoryComboOptions(dataElementId, requests) {
     return def;
 }
 
+function populateAttributeComboDropdown(data) {
+        // Load option combos
+        var attributeSelect = jQuery('<select id="attributeSelect"><option>Select</option></select>');
+        attributeSelect.on('change', onAttributeComboSelect);
+
+        for (var i = 0; i < data.categoryOptionCombos.length; i++) {
+            attributeSelect.append('<option value="' + data.categoryOptionCombos[i].id + '">' + data.categoryOptionCombos[i].name + '</option>');
+        }
+
+        jQuery('#attributeOptions').html("");
+        jQuery('#attributeOptions').append(attributeSelect);
+        jQuery("#attributeSelect").hide().fadeIn("slow");
+        attributeComboOptions = data.categoryOptionCombos;
+}
+
+function getAttributeComboOptions(categoryComboId) {
+    var def = jQuery.Deferred();
+    var requests = [];
+
+    // fetch dataset details
+    requests.push(displayIndicatorsAjax = jQuery.get(OMRS_WEBSERVICES_BASE_URL + "/ws/rest/v1/dhisconnector/dhiscategorycombos/" + categoryComboId + "?v=full", function (data) {
+
+        if(data.dataDimensionType == 'ATTRIBUTE') {
+            // Load category option combos to the drop down
+            populateAttributeComboDropdown(data);
+        } else {
+            // Clear the attributes
+            jQuery('#attributeOptions').html("");
+        }
+    }));
+    jQuery.when.apply($, requests).then(function () {
+        def.resolve();
+    });
+
+    return def;
+}
+
 function getDataElementsAndCategoryComboOptions() {
     var def = jQuery.Deferred();
     var requests = [];
@@ -95,9 +133,11 @@ function getDataElementsAndCategoryComboOptions() {
         jQuery('#categoryComboOptions').html("");
         categoryComboOptions = {};
 
+        // Get the category options related to the attribute combo of the dataset
+        getAttributeComboOptions(data.categoryCombo.id);
 
-        dataElementsOptionsCol.append('<div class="reportRow row"><div class="reportIndicatorCol col-xs"><div class="reportIndicator box" style="height:2.8em;"><h4>Data Element Options</h4></div></div></div>');
-        jQuery('#categoryComboOptions').append('<div class="reportRow row"><div class="reportIndicatorCol col-xs"><div class="reportIndicator box" style="height:2.8em;"><h4>Category Options</h4></div></div></div><img id="categoryComboLoader" class="spinner" src="../../moduleResources/dhisconnector/loading.gif"/>');
+        dataElementsOptionsCol.append('<div class="reportRow row"><div class="reportIndicatorCol col-xs"><div class="reportIndicator box" style="height:2.8em;"><h4>Data Elements</h4></div></div></div>');
+        jQuery('#categoryComboOptions').append('<div class="reportRow row"><div class="reportIndicatorCol col-xs"><div class="reportIndicator box" style="height:2.8em;"><h4>Category Option Combinations</h4></div></div></div><img id="categoryComboLoader" class="spinner" src="../../moduleResources/dhisconnector/loading.gif"/>');
 
 
         for (var i = 0; i < dataElements.length; i++) {
@@ -127,9 +167,12 @@ function getDataElementsAndCategoryComboOptions() {
     return def;
 }
 
-
 function onDataSetSelect() {
     getDataElementsAndCategoryComboOptions().then(displaySelectedMappingComboOptions).then(renderCategoryComboOptions);
+}
+
+function onAttributeComboSelect() {
+    console.log("INSIDE THE ATTRIBUTE LOAD FUNCTION....");
 }
 
 function onReportSelect() {
@@ -140,7 +183,7 @@ function onReportSelect() {
     dateElementMappings.html("");
 
     reportIndicators.append('<div class="reportRow row"><div class="reportIndicatorCol col-xs"><div class="reportIndicator box" style="height:2.8em;"><h4>Indicators</h4></div></div><div class="reportDimensionCol col-xs"><div class="reportDimension box" style="height:2.8em;"><h4>Dimensions</h4></div></div></div>');
-    dateElementMappings.append('<div class="reportRow row"><div class="reportIndicatorCol col-xs"><div class="reportIndicator box" style="height:2.8em;"><h4>Mapped Data Element</h4></div></div><div class="reportDimensionCol col-xs"><div class="reportDimension box" style="height:2.8em;"><h4>Mapped Category</h4></div></div></div>');
+    dateElementMappings.append('<div class="reportRow row"><div class="reportIndicatorCol col-xs"><div class="reportIndicator box" style="height:2.8em;"><h4>Mapped Data Element</h4></div></div><div class="reportDimensionCol col-xs"><div class="reportDimension box" style="height:2.8em;"><h4>Mapped Category Option Combination</h4></div></div></div>');
 
     var selectedSchema = reports.filter(function (val) {
         return val.uuid === jQuery('#reportSelect').val();
@@ -278,6 +321,7 @@ function saveMapping(event) {
     	mapping.name =getUrlParameter("edit");
     }
     mapping.dataSetUID = jQuery('#dataSetSelect').val();
+    mapping.attributeOptionCombo = jQuery('#attributeSelect').val();
     mapping.periodIndicatorReportGUID = jQuery('#reportSelect').val();
 
     mapping.elements = [];
@@ -308,6 +352,9 @@ function saveMapping(event) {
     if (mapping.elements.length > 0) {
     	jQuery("#error-encountered-saving").html("");
 		// post json object
+        var myData = JSON.stringify(mapping);
+        debugger;
+
 		jQuery.ajax({
 			url : OMRS_WEBSERVICES_BASE_URL
 					+ "/ws/rest/v1/dhisconnector/mappings",
@@ -316,7 +363,7 @@ function saveMapping(event) {
 			contentType : "application/json; charset=utf-8",
 			dataType : "json",
 			success : function(data) {
-				window.location = '../../module/dhisconnector/runReports.form';
+				window.location = '../../module/dhisconnector/manageMappings.form';
 			}
 		});
 	} else {
@@ -430,9 +477,11 @@ function loadMappingToBeDisplayed(mapping) {
 			onReportSelect();
 			onDataSetSelect();
 			if(jq("#create-mapping-action").val() === "edit" || jq("#create-mapping-action").val() === "copy") {
-				jq('#mappingName').attr("disabled", true);
 			    jq('#dataSetSelect').attr("disabled", true);
 			    jq('#reportSelect').attr("disabled", true);
+			}
+			if(jq("#create-mapping-action").val() === "edit"){
+				jq('#mappingName').attr("disabled", true);
 			}
 			jq.when(displayIndicatorsAjax, displayDatasetsAjax).done(function() {
 				for (var i = 0; i < jq('.indicatorContainer').length; i++) {
@@ -539,6 +588,7 @@ jQuery(function () {//self invoked only if the whole page has completely loaded
     	
     	populateReportsDropdown();
 		populateDataSetsDropdown();
+
 		drake = dragula({
 			copy : dragulaCopyFunction,
 			accepts : dragulaAcceptsFunction,
@@ -561,9 +611,9 @@ jQuery(function () {//self invoked only if the whole page has completely loaded
 		
 		
 		if(selectedMappingToEdit.name !== undefined && selectedMappingToEdit.created !== undefined) {
-			var mappingDisplay = selectedMappingToEdit.name + "[@]" + selectedMappingToEdit.created;
-			
-			jq("#loading-progress-bar").html("<img class='loading-progress-bar-img' src='../../moduleResources/dhisconnector/hor_loading.gif'/>");	
+			var mappingDisplay = selectedMappingToEdit.name + encodeURI("[@]") + selectedMappingToEdit.created;
+
+			jq("#loading-progress-bar").html("<img class='loading-progress-bar-img' src='../../moduleResources/dhisconnector/hor_loading.gif'/>");
 			console.log("Loading selected mapping to be edited: " + mappingDisplay);
 			headingForCreateMapping = "Editing: " + selectedMappingToEdit.name;
 			jq("h4").html(headingForCreateMapping);
@@ -571,9 +621,9 @@ jQuery(function () {//self invoked only if the whole page has completely loaded
 			jq('#mappingName').val(selectedMappingToEdit.name);
 			fetchAndLoadMappingToBeDisplayed(mappingDisplay);
 		} else if(selectedMappingToCopy.name !== undefined && selectedMappingToCopy.created !== undefined) {
-			var mappingDisplay = selectedMappingToCopy.name + "[@]" + selectedMappingToCopy.created;
-			
-			jq("#loading-progress-bar").html("<img class='loading-progress-bar-img' src='../../moduleResources/dhisconnector/hor_loading.gif'/>");	
+			var mappingDisplay = selectedMappingToCopy.name + encodeURI("[@]") + selectedMappingToCopy.created;
+
+			jq("#loading-progress-bar").html("<img class='loading-progress-bar-img' src='../../moduleResources/dhisconnector/hor_loading.gif'/>");
 			console.log("Loading selected mapping to be copied: " + mappingDisplay);
 			headingForCreateMapping = "Copying: " + selectedMappingToCopy.name;
 			jq("h4").html(headingForCreateMapping);
