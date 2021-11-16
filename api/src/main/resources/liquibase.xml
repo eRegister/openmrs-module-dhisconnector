@@ -130,22 +130,12 @@
 		                         baseTableName="dhisconnector_location_to_orgunit" baseColumnNames="location"
 		                         referencedTableName="location" referencedColumnNames="location_id"/>
 	</changeSet>
-    <changeSet id="drop_not_null_constraint_20210916-1250" author="mwelazek">
-		<preConditions>
-				<tableExists tableName="dhisconnector_report_to_dataset" />			
-		</preConditions>
-		<comment>
-			Alter dhisconnector_report_to_dataset table to allow null for org_unit and location, in line with the upgrade
-		</comment>
-		<dropNotNullConstraint
-			columnDataType="int(11)"  
-			columnName="location"  
-			schemaName="openmrs"
-			tableName="dhisconnector_report_to_dataset"/>
-		<dropNotNullConstraint
-			columnDataType="text"  
-			columnName="org_unit_uid"  
-			schemaName="openmrs"  
-			tableName="dhisconnector_report_to_dataset"/>
+	<changeSet id="drop_not_null_constraint_20210916" author="mwelazek" context="connector_updates">
+		<comment>connector_updates</comment>
+		<sqlFile path="dhis_connector_attribute_combo_update.sql"/>
+	</changeSet>
+	<changeSet id="add_repush_columns_20211101" author="mwelazek" context="connector_updates">
+		<comment>connector_updates</comment>
+		<sqlFile path="dhis_connector_multiple_repush_update.sql"/>
 	</changeSet>
 </databaseChangeLog>
