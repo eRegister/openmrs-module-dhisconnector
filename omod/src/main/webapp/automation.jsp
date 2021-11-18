@@ -66,9 +66,6 @@
         <openmrs:hasPrivilege privilege="Run Automation">
             <input name="run" type="submit" value="<spring:message code='dhisconnector.automation.runSelected'/>">
         </openmrs:hasPrivilege>
-        <openmrs:hasPrivilege privilege="Run Automation">
-            <input name="runAll" type="submit" value="<spring:message code='dhisconnector.automation.runAllAutomations'/>">
-        </openmrs:hasPrivilege>
         <openmrs:hasPrivilege privilege="Manage Automation">
             <input name="delete" type="submit" value="<spring:message code='dhisconnector.automation.delete'/>">
         </openmrs:hasPrivilege>

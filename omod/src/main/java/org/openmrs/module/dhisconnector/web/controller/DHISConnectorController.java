@@ -449,12 +449,6 @@ public class DHISConnectorController {
 			request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, response);
 	}
 
-	@RequestMapping(value = "/module/dhisconnector/automation", params = "runAll", method = RequestMethod.POST)
-	public void testPostAllAutomationsPage(ModelMap model, HttpServletRequest request) {
-		String response = "";
-		Context.getService(DHISConnectorService.class).runAllAutomatedReportsAndPostToDHIS();
-	}
-
 	@RequestMapping(value = "/module/dhisconnector/automation", params = "saveAutomationToggle", method = RequestMethod.POST)
 	public void toggleAutomation(ModelMap model, HttpServletRequest request) {
 		String response = "";
