@@ -23,7 +23,7 @@ import java.util.List;
 @Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({
     "dataSet",
-    "completeData",
+    "completeDate",
     "period",
     "orgUnit",
     "attributeOptionCombo",
@@ -33,8 +33,8 @@ public class DHISDataValueSet {
 
     @JsonProperty("dataSet")
     private String dataSet;
-    @JsonProperty("completeData")
-    private String completeData;
+    @JsonProperty("completeDate")
+    private String completeDate;
     @JsonProperty("period")
     private String period;
     @JsonProperty("orgUnit")
@@ -69,19 +69,19 @@ public class DHISDataValueSet {
      * @return
      *     The completeData
      */
-    @JsonProperty("completeData")
-    public String getCompleteData() {
-        return completeData;
+    @JsonProperty("completeDate")
+    public String getCompleteDate() {
+        return completeDate;
     }
 
     /**
      * 
-     * @param completeData
-     *     The completeData
+     * @param completeDate
+     *     The completeDate
      */
-    @JsonProperty("completeData")
-    public void setCompleteData(String completeData) {
-        this.completeData = completeData;
+    @JsonProperty("completeDate")
+    public void setCompleteDate(String completeDate) {
+        this.completeDate = completeDate;
     }
 
     /**

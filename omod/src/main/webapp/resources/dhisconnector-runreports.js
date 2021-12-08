@@ -509,14 +509,18 @@ function getMappingForIndicator(indicator) {
     }
 }
 
-function buildDXFJSON(locationUid, orgUnitId) {
-    debugger;
+function getCurrentISODate() {
+    const currentISODate = moment(selectedPeriod).add(1, "month").date(1);
+    return currentISODate.format("yyyy-MM-DD");
+}
 
+function buildDXFJSON(locationUid, orgUnitId) {
     dxfJSON = null;
 
     return getReportData(locationUid).then(function () {
         dxfJSON = {};
         dxfJSON.dataSet = selectedMapping.dataSetUID;
+        dxfJSON.completeDate = getCurrentISODate();
         dxfJSON.period = selectedPeriod.toString();
         dxfJSON.orgUnit = orgUnitId;
         dxfJSON.attributeOptionCombo = selectedMapping.attributeOptionCombo;
@@ -582,7 +586,6 @@ function downloadAdx() {
 }
 
 function sendDataToDHIS() {
-    debugger;
 
     selectedLocations = [];
     jQuery("#orgUnitSelect input[type='checkbox']:checked").each(function() {
@@ -631,7 +634,6 @@ function createDownload(content, contentType, extension, orgUnitUid) {
 }
 
 function generateDXFDownload() {
-    debugger;
 
     selectedLocations = [];
     jQuery("#orgUnitSelect input[type='checkbox']:checked").each(function() {

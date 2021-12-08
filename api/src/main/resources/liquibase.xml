@@ -138,4 +138,23 @@
 		<comment>connector_updates</comment>
 		<sqlFile path="dhis_connector_multiple_repush_update.sql"/>
 	</changeSet>
+    <!-- <changeSet id="drop_not_null_constraint_20210916-1250" author="mwelazek">
+		<preConditions>
+				<tableExists tableName="dhisconnector_report_to_dataset" />			
+		</preConditions>
+		<comment>
+			Alter dhisconnector_report_to_dataset table to allow null for org_unit and location, in line with the upgrade
+		</comment>
+		<dropNotNullConstraint
+			columnDataType="int(11)"  
+			columnName="location"  
+			schemaName="openmrs"
+			tableName="dhisconnector_report_to_dataset"/>
+		<dropNotNullConstraint
+			columnDataType="text"  
+			columnName="org_unit_uid"  
+			schemaName="openmrs"  
+			tableName="dhisconnector_report_to_dataset"/>
+	</changeSet> -->
+
 </databaseChangeLog>

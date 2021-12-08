@@ -99,6 +99,7 @@ public class DHISDataValueSetsResource extends DataDelegatingCrudResource implem
 	public DelegatingResourceDescription getCreatableProperties() {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
 		description.addProperty("dataSet");
+		description.addProperty("completeDate");
 		description.addProperty("period");
 		description.addProperty("orgUnit");
 		description.addProperty("attributeOptionCombo");
@@ -115,6 +116,7 @@ public class DHISDataValueSetsResource extends DataDelegatingCrudResource implem
 	public DelegatingResourceDescription getRepresentationDescription(Representation representation) {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
 		description.addProperty("dataSet");
+		description.addProperty("completeDate");
 		description.addProperty("period");
 		description.addProperty("orgUnit");
 		description.addProperty("attributeOptionCombo");

@@ -1376,7 +1376,8 @@ public class DHISConnectorServiceImpl extends BaseOpenmrsService implements DHIS
 						.getService(ReportDefinitionService.class)
 						.getDefinitionByUuid(mapping.getPeriodIndicatorReportGUID());
 				Date lastRun = reportToDatasetMapping.getLastRun();
-				int nextRetryCount = reportToDatasetMapping.getRetryCount() + 1;
+				int nextRetryCount = reportToDatasetMapping.getRetryCount() != null ?
+						reportToDatasetMapping.getRetryCount() + 1 : 1;
 				String period = transformToDHISPeriod(startDate, endDate, periodType, lastRun, nextRetryCount, latestRetryDate.getTime());
 
 				List<DHISOrganisationUnit> orgs = dataSet.getOrganisationUnits();
@@ -1737,6 +1738,7 @@ public class DHISConnectorServiceImpl extends BaseOpenmrsService implements DHIS
 			}
 		}
 		dataValueSet.setDataValues(dataValues);
+		dataValueSet.setCompleteDate(getDSCompletionDate());
 		dataValueSet.setOrgUnit(orgUnitUid);
 		dataValueSet.setPeriod(dhisPeriod);
 		dataValueSet.setDataSet(dataSetId);
@@ -1746,6 +1748,13 @@ public class DHISConnectorServiceImpl extends BaseOpenmrsService implements DHIS
 			return postDataValueSet(dataValueSet);
 		
 		return null;
+	}
+
+	private String getDSCompletionDate() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar startDate = Calendar.getInstance(Context.getLocale());
+		startDate.set(Calendar.DAY_OF_MONTH, 1);
+		return dateFormat.format(startDate.getTime());
 	}
 	
 	private DHISMappingElement getDataElementForIndicator(String indicator, List<DHISMappingElement> list) {
