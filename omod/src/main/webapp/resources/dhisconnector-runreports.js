@@ -510,7 +510,7 @@ function getMappingForIndicator(indicator) {
 }
 
 function getCurrentISODate() {
-    const currentISODate = moment(selectedPeriod).add(1, "month").date(1);
+    const currentISODate = moment(selectedEndDate).add(1, "days").date(1);
     return currentISODate.format("yyyy-MM-DD");
 }
 
